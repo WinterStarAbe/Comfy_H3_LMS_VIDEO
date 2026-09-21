@@ -51,48 +51,76 @@ class ComfyUIBatchClient:
                 ws = websocket.WebSocket()
                 ws.connect(ws_url, timeout=5)
                 while time.time() - start_time < timeout:
-                    out = ws.recv()
-                    if isinstance(out, str):
-                        message = json.loads(out)
-                        if message.get("type") == "executing":
-                            data = message.get("data", {})
-                            if data.get("node") is None and data.get("prompt_id") == prompt_id:
-                                executed_successfully = True
-                                break
+                    try:
+                        ws.settimeout(2.0)
+                        out = ws.recv()
+                        if isinstance(out, str):
+                            message = json.loads(out)
+                            if message.get("type") == "executing":
+                                data = message.get("data", {})
+                                if data.get("node") is None and data.get("prompt_id") == prompt_id:
+                                    executed_successfully = True
+                                    break
+                    except Exception:
+                        if self._check_prompt_in_history(prompt_id):
+                            executed_successfully = True
+                            break
                 ws.close()
             except Exception as e:
-                print(f"WebSocket warning: {e}, falling back to polling history...")
-                executed_successfully = True
-        else:
-            time.sleep(5)
-            executed_successfully = True
+                print(f"WebSocket warning: {e}, falling back to history polling...")
+
+        if not executed_successfully:
+            poll_start = time.time()
+            while time.time() - poll_start < min(timeout, 300):
+                if self._check_prompt_in_history(prompt_id):
+                    executed_successfully = True
+                    break
+                time.sleep(2.0)
 
         output_video_url = None
         if executed_successfully:
-            try:
-                hist_res = requests.get(f"http://{self.server_address}/history/{prompt_id}", timeout=5)
-                if hist_res.status_code == 200:
-                    hist_data = hist_res.json()
-                    if prompt_id in hist_data:
-                        outputs = hist_data[prompt_id].get("outputs", {})
-                        for node_id, node_output in outputs.items():
-                            media_list = node_output.get("gifs", []) or node_output.get("videos", [])
-                            if media_list:
-                                item = media_list[0]
-                                filename = item.get("filename")
-                                subfolder = item.get("subfolder", "")
-                                file_type = item.get("type", "output")
-                                output_video_url = (
-                                    f"http://{self.server_address}/view?"
-                                    f"filename={requests.utils.quote(filename)}&"
-                                    f"subfolder={requests.utils.quote(subfolder)}&"
-                                    f"type={file_type}"
-                                )
-                                break
-            except Exception as e:
-                print(f"Failed to fetch history output: {e}")
+            output_video_url = self._get_output_url_from_history(prompt_id)
+            if not output_video_url:
+                executed_successfully = False
 
         return executed_successfully, output_video_url
+
+    def _check_prompt_in_history(self, prompt_id):
+        try:
+            hist_res = requests.get(f"http://{self.server_address}/history/{prompt_id}", timeout=5)
+            if hist_res.status_code == 200:
+                hist_data = hist_res.json()
+                if prompt_id in hist_data:
+                    prompt_data = hist_data[prompt_id]
+                    if "outputs" in prompt_data and prompt_data["outputs"]:
+                        return True
+        except Exception:
+            pass
+        return False
+
+    def _get_output_url_from_history(self, prompt_id):
+        try:
+            hist_res = requests.get(f"http://{self.server_address}/history/{prompt_id}", timeout=5)
+            if hist_res.status_code == 200:
+                hist_data = hist_res.json()
+                if prompt_id in hist_data:
+                    outputs = hist_data[prompt_id].get("outputs", {})
+                    for node_id, node_output in outputs.items():
+                        media_list = node_output.get("gifs", []) or node_output.get("videos", [])
+                        if media_list:
+                            item = media_list[0]
+                            filename = item.get("filename")
+                            subfolder = item.get("subfolder", "")
+                            file_type = item.get("type", "output")
+                            return (
+                                f"http://{self.server_address}/view?"
+                                f"filename={requests.utils.quote(filename)}&"
+                                f"subfolder={requests.utils.quote(subfolder)}&"
+                                f"type={file_type}"
+                            )
+        except Exception as e:
+            print(f"Failed to fetch history output: {e}")
+        return None
 
     def run_batch(self, folder_path, custom_prompt=None, output_prefix="video/upscale", 
                   lms_lora_strength=0.78, scale_to_length=1024, 
@@ -149,7 +177,7 @@ class ComfyUIBatchClient:
         if progress_callback:
             progress_callback("info", f"📁 總資料夾檔案數: {total_files} | 本次預定執行: {run_total} 個影片 (起始索引: {start_idx})...", None)
 
-        last_processed_idx = start_idx
+        last_success_idx = start_idx - 1
 
         for count, idx in enumerate(target_indices):
             if os.path.exists(cancel_flag_path):
@@ -176,7 +204,7 @@ class ComfyUIBatchClient:
                 success, video_url = self.wait_for_prompt_and_get_output(prompt_id)
                 
                 if success:
-                    last_processed_idx = idx
+                    last_success_idx = idx
                     if progress_callback:
                         progress_callback("success", f"✅ [完成: {count+1}/{run_total}] 成功處理: {filename}", video_url)
                 else:
@@ -193,8 +221,11 @@ class ComfyUIBatchClient:
             except:
                 pass
 
-        # 計算下一次執行的建議起始索引 (若順利完成當前批次，則指向下一支影片)
-        next_start_index = last_processed_idx + 1 if last_processed_idx >= start_idx else start_idx
+        if last_success_idx >= start_idx:
+            next_start_index = last_success_idx + 1
+        else:
+            next_start_index = start_idx
+
         if next_start_index >= total_files:
             next_start_index = total_files - 1 if total_files > 0 else 0
 
