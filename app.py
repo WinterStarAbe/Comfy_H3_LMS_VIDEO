@@ -34,6 +34,15 @@ def _atomic_write_json(file_path, data, indent=2):
                 pass
         st.error(f"Error saving JSON to {file_path}: {e}")
 
+
+def validate_safe_path(path_str):
+    if not path_str or not os.path.isabs(path_str):
+        return None
+    normalized_path = os.path.normpath(path_str)
+    if os.path.isdir(normalized_path) and os.access(normalized_path, os.R_OK):
+        return normalized_path
+    return None
+
 def load_history(file_path):
     if os.path.exists(file_path):
         try:
@@ -172,15 +181,16 @@ with col1:
         )
 
     total_found = 0
-    if os.path.exists(folder_path):
-        v_files = client.get_video_files(folder_path)
+    clean_folder_path = folder_path.strip().strip('"\'')
+    if os.path.isdir(clean_folder_path):
+        v_files = client.get_video_files(clean_folder_path)
         total_found = len(v_files)
         st.success(f"📂 資料夾驗證成功！共偵測到 **{total_found}** 個影片檔案（全域索引 0 ~ {max(0, total_found-1)}）。")
         with st.expander("點此檢視待處理影片清單與索引對照"):
             for idx, vf in enumerate(v_files):
                 st.text(f"[{idx}] {os.path.basename(vf)}")
     else:
-        st.warning("⚠️ 指定的資料夾路徑不存在或無權限存取。")
+        st.warning("⚠️ 指定的資料夾路徑不存在、不是有效資料夾或無權限存取。")
 
     st.markdown("---")
     st.subheader("🔢 序列控制 (PrimitiveInt & 批次範圍)")
@@ -194,7 +204,7 @@ with col1:
             "PrimitiveInt 起始索引 (Start Index)",
             min_value=0,
             max_value=max(0, total_found - 1),
-            value=int(st.session_state.current_start_index),
+            value=min(int(st.session_state.current_start_index), max(0, total_found - 1)),
             step=1,
             help="對應工作流節點 424 (PrimitiveInt)。每次批次執行完畢後會自動更新為下一支影片索引。"
         )

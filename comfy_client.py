@@ -30,13 +30,18 @@ class ComfyUIBatchClient:
             return json.load(f)
 
     def get_video_files(self, folder_path):
-        if not os.path.exists(folder_path):
+        if not folder_path or not os.path.isdir(folder_path):
             return []
-        return sorted([
-            os.path.abspath(os.path.join(folder_path, f))
-            for f in os.listdir(folder_path)
-            if f.lower().endswith(('.mp4', '.avi', '.mov', '.mkv'))
-        ])
+        norm_path = os.path.abspath(os.path.normpath(folder_path))
+        try:
+            return sorted([
+                os.path.abspath(os.path.join(norm_path, f))
+                for f in os.listdir(norm_path)
+                if f.lower().endswith(('.mp4', '.avi', '.mov', '.mkv')) 
+                and os.path.isfile(os.path.join(norm_path, f))
+            ])
+        except Exception:
+            return []
 
     def queue_prompt(self, workflow):
         url = f"http://{self.server_address}/prompt"
