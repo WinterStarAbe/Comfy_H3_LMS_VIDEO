@@ -1,0 +1,35 @@
+# Python runtime artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Local Streamlit/runtime state
+cancel_run.flag
+app_settings.json
+history_input.json
+history_output.json
+.streamlit/secrets.toml
+
+# Local environments
+.venv/
+venv/
+env/
+
+# Logs and generated media
+*.log
+*.mp4
+*.avi
+*.mov
+*.mkv
+output/
+input/
+
+# Agent/IDE-local configuration
+.agents/
+.claude/
+
+# IDE and OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

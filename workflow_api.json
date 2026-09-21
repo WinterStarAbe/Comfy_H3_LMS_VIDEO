@@ -1,0 +1,558 @@
+{
+  "1": {
+    "inputs": {
+      "clip_name": "qwen3vl_32b_minimax_h3_int8_convrot.safetensors",
+      "type": "minimax",
+      "device": "default"
+    },
+    "class_type": "CLIPLoader",
+    "_meta": {
+      "title": "載入 CLIP"
+    }
+  },
+  "2": {
+    "inputs": {
+      "unet_name": "minimax_h3_hybrid_fl2va_ref2va_b25-49-int8.safetensors",
+      "weight_dtype": "default"
+    },
+    "class_type": "UNETLoader",
+    "_meta": {
+      "title": "載入擴散模型"
+    }
+  },
+  "3": {
+    "inputs": {
+      "vae_name": "minimax_h3_video_vae_fp16.safetensors"
+    },
+    "class_type": "VAELoader",
+    "_meta": {
+      "title": "載入 VAE"
+    }
+  },
+  "8": {
+    "inputs": {
+      "width": [
+        "363",
+        3
+      ],
+      "height": [
+        "363",
+        4
+      ],
+      "upscale_method": "lanczos",
+      "keep_proportion": "resize",
+      "pad_color": "0, 0, 0",
+      "crop_position": "center",
+      "divisible_by": 2,
+      "device": "cpu",
+      "image": [
+        "433",
+        0
+      ]
+    },
+    "class_type": "ImageResizeKJv2",
+    "_meta": {
+      "title": "Resize Image v2"
+    }
+  },
+  "9": {
+    "inputs": {
+      "shift_video": 12,
+      "shift_audio": 3,
+      "model": [
+        "2",
+        0
+      ]
+    },
+    "class_type": "MiniMaxH3SigmaShift",
+    "_meta": {
+      "title": "MiniMax H3 Sigma Shift"
+    }
+  },
+  "11": {
+    "inputs": {
+      "cfg": 1,
+      "model": [
+        "42",
+        0
+      ],
+      "positive": [
+        "81",
+        0
+      ],
+      "negative": [
+        "81",
+        0
+      ]
+    },
+    "class_type": "CFGGuider",
+    "_meta": {
+      "title": "CFGGuider"
+    }
+  },
+  "13": {
+    "inputs": {
+      "noise_seed": 666
+    },
+    "class_type": "RandomNoise",
+    "_meta": {
+      "title": "隨機雜訊"
+    }
+  },
+  "14": {
+    "inputs": {
+      "noise": [
+        "13",
+        0
+      ],
+      "guider": [
+        "11",
+        0
+      ],
+      "sampler": [
+        "15",
+        0
+      ],
+      "sigmas": [
+        "181",
+        0
+      ],
+      "latent_image": [
+        "289",
+        0
+      ]
+    },
+    "class_type": "SamplerCustomAdvanced",
+    "_meta": {
+      "title": "SamplerCustomAdvanced"
+    }
+  },
+  "15": {
+    "inputs": {
+      "sampler_name": "euler"
+    },
+    "class_type": "KSamplerSelect",
+    "_meta": {
+      "title": "K採樣器選擇"
+    }
+  },
+  "22": {
+    "inputs": {
+      "av_latent": [
+        "14",
+        0
+      ]
+    },
+    "class_type": "LTXVSeparateAVLatent",
+    "_meta": {
+      "title": "分離 AV 潛空間"
+    }
+  },
+  "42": {
+    "inputs": {
+      "lora_name": "minimax_h3_lms_v1.0_r64.safetensors",
+      "strength_model": 0.78,
+      "model": [
+        "64",
+        0
+      ]
+    },
+    "class_type": "LoraLoaderModelOnly",
+    "_meta": {
+      "title": "LoraLoaderModelOnly"
+    }
+  },
+  "45": {
+    "inputs": {
+      "samples": [
+        "22",
+        0
+      ],
+      "vae": [
+        "3",
+        0
+      ]
+    },
+    "class_type": "VAEDecode",
+    "_meta": {
+      "title": "VAE 解碼"
+    }
+  },
+  "58": {
+    "inputs": {
+      "attention": "comfy kitchen attention",
+      "model": [
+        "9",
+        0
+      ]
+    },
+    "class_type": "ModelAttentionBackend",
+    "_meta": {
+      "title": "ModelAttentionBackend"
+    }
+  },
+  "59": {
+    "inputs": {
+      "head_chunks": 4,
+      "model": [
+        "362",
+        0
+      ]
+    },
+    "class_type": "MiniMaxLowVRAMAttention",
+    "_meta": {
+      "title": "MiniMax H3 Low VRAM Attention"
+    }
+  },
+  "60": {
+    "inputs": {
+      "chunks": 4,
+      "seq_threshold": 4352,
+      "model": [
+        "59",
+        0
+      ]
+    },
+    "class_type": "MiniMaxChunkFeedForward",
+    "_meta": {
+      "title": "MiniMax H3 Chunk FeedForward"
+    }
+  },
+  "64": {
+    "inputs": {
+      "lora_name": "minimax_h3_fl2v_lightx2v_turbo_4step_v0.1_comfy.safetensors",
+      "strength_model": 0.7,
+      "model": [
+        "60",
+        0
+      ]
+    },
+    "class_type": "LoraLoaderModelOnly",
+    "_meta": {
+      "title": "LoraLoaderModelOnly"
+    }
+  },
+  "81": {
+    "inputs": {
+      "frame_idx": 0,
+      "positive": [
+        "288",
+        0
+      ],
+      "latent": [
+        "289",
+        0
+      ],
+      "vae": [
+        "3",
+        0
+      ],
+      "image": [
+        "363",
+        0
+      ]
+    },
+    "class_type": "MiniMaxH3AddGuide",
+    "_meta": {
+      "title": "Add Guide for MiniMax H3"
+    }
+  },
+  "181": {
+    "inputs": {
+      "scheduler": "simple",
+      "steps": 6,
+      "denoise": 1,
+      "model": [
+        "42",
+        0
+      ]
+    },
+    "class_type": "BasicScheduler",
+    "_meta": {
+      "title": "BasicScheduler"
+    }
+  },
+  "288": {
+    "inputs": {
+      "text": [
+        "348",
+        0
+      ],
+      "clip": [
+        "1",
+        0
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "CLIP 文字編碼（提示詞）"
+    }
+  },
+  "289": {
+    "inputs": {
+      "width": [
+        "8",
+        1
+      ],
+      "height": [
+        "8",
+        2
+      ],
+      "length": [
+        "353",
+        6
+      ]
+    },
+    "class_type": "EmptyMiniMaxH3LatentAV",
+    "_meta": {
+      "title": "Empty MiniMax H3 AV 潛空間"
+    }
+  },
+  "330": {
+    "inputs": {
+      "frame_rate": 24,
+      "loop_count": 0,
+      "filename_prefix": "comparison",
+      "format": "video/h264-mp4",
+      "pix_fmt": "yuv420p",
+      "crf": 12,
+      "save_metadata": false,
+      "trim_to_audio": false,
+      "pingpong": false,
+      "save_output": false,
+      "images": [
+        "332",
+        0
+      ]
+    },
+    "class_type": "VHS_VideoCombine",
+    "_meta": {
+      "title": "Video Combine 🎥🅥🅗🅢"
+    }
+  },
+  "332": {
+    "inputs": {
+      "inputcount": 2,
+      "direction": "right",
+      "match_image_size": true,
+      "Update inputs": null,
+      "image_1": [
+        "363",
+        0
+      ],
+      "image_2": [
+        "45",
+        0
+      ]
+    },
+    "class_type": "ImageConcatMulti",
+    "_meta": {
+      "title": "Image Concatenate Multi"
+    }
+  },
+  "348": {
+    "inputs": {
+      "value": "Restore and enhance this early low-resolution video with a natural realistic color grade, removing haze and overexposure, improving optical transparency and local contrast. Concentrate high-frequency clarity boost strictly on non-skin details: eyes, eyelashes, eyebrows, lips, hair strands, clothing fibers, and background structures. On the skin: maintain a soft, even, healthy, naturally luminous complexion, softening pre-existing dullness, uneven tone, dark spots, and blemishes without sharpening them into pores or rough textures. Preserve original identity, facial features, lighting, and motion perfectly. Photorealistic, crisp edge definition, natural filmic look."
+    },
+    "class_type": "PrimitiveStringMultiline",
+    "_meta": {
+      "title": "字串（多行）"
+    }
+  },
+  "353": {
+    "inputs": {
+      "video_info": [
+        "433",
+        3
+      ]
+    },
+    "class_type": "VHS_VideoInfo",
+    "_meta": {
+      "title": "Video Info 🎥🅥🅗🅢"
+    }
+  },
+  "362": {
+    "inputs": {
+      "tau": 1.3,
+      "start_percent": 0.2,
+      "end_percent": 1,
+      "min_tokens": 12288,
+      "sink_conditioning": "exact_kv_and_rows",
+      "morton": false,
+      "morton_curve": "2d_frame",
+      "centroid_tail": true,
+      "routed_cap_percent": 0,
+      "reuse_qkv_memory": false,
+      "verbose": false,
+      "dense_blocks": "",
+      "model": [
+        "58",
+        0
+      ]
+    },
+    "class_type": "SolAttnMiniMax",
+    "_meta": {
+      "title": "Patch Sol-Attn (MiniMax)"
+    }
+  },
+  "363": {
+    "inputs": {
+      "aspect_ratio": "original",
+      "proportional_width": 1,
+      "proportional_height": 1,
+      "fit": "crop",
+      "method": "lanczos",
+      "round_to_multiple": "32",
+      "scale_to_side": "longest",
+      "scale_to_length": 1024,
+      "background_color": "#000000",
+      "image": [
+        "433",
+        0
+      ]
+    },
+    "class_type": "LayerUtility: ImageScaleByAspectRatio V2",
+    "_meta": {
+      "title": "LayerUtility: ImageScaleByAspectRatio V2"
+    }
+  },
+  "364": {
+    "inputs": {
+      "frame_rate": 24,
+      "loop_count": 0,
+      "filename_prefix": "video/upscale",
+      "format": "video/h264-mp4",
+      "pix_fmt": "yuv420p",
+      "crf": 12,
+      "save_metadata": false,
+      "trim_to_audio": false,
+      "pingpong": false,
+      "save_output": true,
+      "images": [
+        "45",
+        0
+      ]
+    },
+    "class_type": "VHS_VideoCombine",
+    "_meta": {
+      "title": "Video Combine 🎥🅥🅗🅢"
+    }
+  },
+  "422": {
+    "inputs": {
+      "strings": "\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\001..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\002..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\003..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\004..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\005..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\006..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\007..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\008..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\009..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\010..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\011..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\012..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\013..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\014..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\015..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\016..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\017..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\018..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\019..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\020..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\021..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\022..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\023..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\024..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\025..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\026..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\027..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\028..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\029..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\030..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\031..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\032..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\033..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\034..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\035..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\036..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\037..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\038..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\039..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\040..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\041..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\042..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\043..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\044..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\045..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\046..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\047..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\048..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\049..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\050..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\051..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\052..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\053..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\054..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\055..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\056..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\057..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\058..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\059..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\060..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\061..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\062..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\063..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\064..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\065..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\066..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\067..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\068..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\069..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\070..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\071..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\072..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\073..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\074..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\075..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\076..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\077..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\078..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\079..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\080..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\081..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\082..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\083..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\084..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\085..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\086..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\087..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\088..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\089..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\090..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\091..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\092..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\093..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\094..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\095..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\096..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\097..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\098..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\099..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\100..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\101..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\102..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\103..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\104..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\105..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\106..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\107..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\108..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\109..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\110..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\111..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\112..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\113..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\114..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\115..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\116..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\117..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\118..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\119..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\120..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\121..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\122..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\123..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\124..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\125..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\126..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\127..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\128..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\129..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\130..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\131..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\132..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\133..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\134..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\135..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\136..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\137..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\138..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\139..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\140..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\141..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\142..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\143..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\144..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\145..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\146..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\147..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\148..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\149..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\150..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\151..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\152..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\153..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\154..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\155..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\156..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\157..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\158..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\159..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\160..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\161..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\162..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\163..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\164..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\165..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\166..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\167..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\168..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\169..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\170..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\171..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\172..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\173..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\174..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\175..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\176..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\177..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\178..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\179..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\180..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\181..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\182..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\183..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\184..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\185..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\186..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\187..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\188..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\189..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\190..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\191..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\192..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\193..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\194..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\195..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\196..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\197..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\198..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\199..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\200..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\201..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\202..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\203..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\204..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\205..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\206..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\207..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\208..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\209..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\210..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\211..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\212..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\213..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\214..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\215..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\216..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\217..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\218..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\219..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\220..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\221..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\222..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\223..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\224..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\225..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\226..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\227..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\228..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\229..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\230..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\231..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\232..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\233..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\234..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\235..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\236..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\237..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\238..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\239..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\240..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\241..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\242..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\243..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\244..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\245..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\246..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\247..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\248..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\249..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\250..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\251..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\252..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\253..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\254..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\255..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\256..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\257..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\258..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\259..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\260..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\261..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\262..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\263..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\264..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\265..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\266..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\267..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\268..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\269..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\270..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\271..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\272..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\273..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\274..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\275..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\276..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\277..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\278..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\279..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\280..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\281..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\282..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\283..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\284..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\285..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\286..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\287..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\288..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\289..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\290..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\291..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\292..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\293..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\294..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\295..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\296..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\297..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\298..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\299..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\300..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\301..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\302..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\303..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\304..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\305..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\306..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\307..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\308..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\309..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\310..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\311..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\312..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\313..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\314..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\315..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\316..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\317..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\318..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\319..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\320..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\321..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\322..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\323..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\324..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\325..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\326..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\327..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\328..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\329..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\330..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\331..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\332..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\333..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\334..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\335..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\336..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\337..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\338..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\339..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\340..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\341..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\342..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\343..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\344..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\345..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\346..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\347..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\348..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\349..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\350..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\351..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\352..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\353..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\354..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\355..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\356..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\357..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\358..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\359..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\360..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\361..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\362..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\363..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\364..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\365..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\366..mp4\"\n\"E:\\WorkSpace\\AIVideo\\output\\rika_11\\367..mp4\"",
+      "multiline": false,
+      "select": [
+        "424",
+        0
+      ]
+    },
+    "class_type": "ImpactStringSelector",
+    "_meta": {
+      "title": "String Selector"
+    }
+  },
+  "424": {
+    "inputs": {
+      "value": 264
+    },
+    "class_type": "PrimitiveInt",
+    "_meta": {
+      "title": "整數"
+    }
+  },
+  "431": {
+    "inputs": {
+      "operation": "lowercase",
+      "text": [
+        "422",
+        0
+      ]
+    },
+    "class_type": "CR Text Operation",
+    "_meta": {
+      "title": "🔤 CR Text Operation"
+    }
+  },
+  "432": {
+    "inputs": {
+      "source": [
+        "431",
+        0
+      ]
+    },
+    "class_type": "PreviewAny",
+    "_meta": {
+      "title": "預覽任意"
+    }
+  },
+  "433": {
+    "inputs": {
+      "video": [
+        "431",
+        0
+      ],
+      "force_rate": 24,
+      "custom_width": 0,
+      "custom_height": 0,
+      "frame_load_cap": 121,
+      "skip_first_frames": 0,
+      "select_every_nth": 1,
+      "format": "AnimateDiff"
+    },
+    "class_type": "VHS_LoadVideoPath",
+    "_meta": {
+      "title": "Load Video (Path) 🎥🅥🅗🅢"
+    }
+  },
+  "435": {
+    "inputs": {
+      "text": "119",
+      "anything": [
+        "353",
+        6
+      ]
+    },
+    "class_type": "easy showAnything",
+    "_meta": {
+      "title": "Show Any"
+    }
+  },
+  "437": {
+    "inputs": {
+      "tau": 1.3,
+      "start_percent": 0.2,
+      "end_percent": 0.9,
+      "min_tokens": 12288,
+      "sink_conditioning": "exact_kv_and_rows",
+      "morton": false,
+      "morton_curve": "2d_frame",
+      "centroid_tail": true,
+      "routed_cap_percent": 0,
+      "reuse_qkv_memory": false,
+      "verbose": false,
+      "dense_blocks": ""
+    },
+    "class_type": "SolAttnMiniMax",
+    "_meta": {
+      "title": "Patch Sol-Attn (MiniMax)"
+    }
+  },
+  "438": {
+    "inputs": {
+      "aspect_ratio": "original",
+      "proportional_width": 1,
+      "proportional_height": 1,
+      "fit": "crop",
+      "method": "lanczos",
+      "round_to_multiple": "32",
+      "scale_to_side": "longest",
+      "scale_to_length": 1088,
+      "background_color": "#000000"
+    },
+    "class_type": "LayerUtility: ImageScaleByAspectRatio V2",
+    "_meta": {
+      "title": "LayerUtility: ImageScaleByAspectRatio V2"
+    }
+  }
+}
