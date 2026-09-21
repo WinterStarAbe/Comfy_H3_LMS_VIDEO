@@ -10,8 +10,11 @@ except ImportError:
     pass
 
 class ComfyUIBatchClient:
-    def __init__(self, server_address="127.0.0.1:8188", workflow_path="workflow_api.json"):
+    def __init__(self, server_address="127.0.0.1:8188", workflow_path=None):
         self.server_address = server_address
+        if workflow_path is None:
+            base_dir = os.path.dirname(os.path.abspath(__file__))
+            workflow_path = os.path.join(base_dir, "workflow_api.json")
         self.workflow_path = workflow_path
         self.client_id = str(uuid.uuid4())
 

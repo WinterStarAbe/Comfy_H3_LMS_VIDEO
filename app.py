@@ -1,11 +1,6 @@
 import os
 import json
-import time
-import importlib
 import streamlit as st
-import comfy_client
-
-importlib.reload(comfy_client)
 from comfy_client import ComfyUIBatchClient
 
 st.set_page_config(
@@ -15,12 +10,29 @@ st.set_page_config(
 )
 
 st.title("🎬 MiniMax H3 影片批次高清化 Web 原型系統")
-st.markdown("本系統直接對接您的 ComfyUI 工作流 API (`T8star-MiniMax H3 LMS视频高清化API.json`)，支援自動掃描資料夾、設定持久化記憶、日誌與預覽完整保留、批次索引自動遞增、即時中斷與影片預覽。")
+st.markdown("本系統直接對接您的 ComfyUI 工作流 API，支援自動掃描資料夾、設定持久化記憶、日誌與預覽完整保留、批次索引自動遞增、即時中斷與影片預覽。")
 
-CANCEL_FLAG = "cancel_run.flag"
-HISTORY_INPUT_FILE = "history_input.json"
-HISTORY_OUTPUT_FILE = "history_output.json"
-SETTINGS_FILE = "app_settings.json"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+CANCEL_FLAG = os.path.join(BASE_DIR, "cancel_run.flag")
+HISTORY_INPUT_FILE = os.path.join(BASE_DIR, "history_input.json")
+HISTORY_OUTPUT_FILE = os.path.join(BASE_DIR, "history_output.json")
+SETTINGS_FILE = os.path.join(BASE_DIR, "app_settings.json")
+
+def _atomic_write_json(file_path, data, indent=2):
+    temp_path = f"{file_path}.tmp.{os.getpid()}"
+    try:
+        with open(temp_path, "w", encoding="utf-8") as f:
+            json.dump(data, f, ensure_ascii=False, indent=indent)
+            f.flush()
+            os.fsync(f.fileno())
+        os.replace(temp_path, file_path)
+    except Exception as e:
+        if os.path.exists(temp_path):
+            try:
+                os.remove(temp_path)
+            except Exception:
+                pass
+        st.error(f"Error saving JSON to {file_path}: {e}")
 
 def load_history(file_path):
     if os.path.exists(file_path):
@@ -54,12 +66,9 @@ def load_settings():
             pass
     return {}
 
-def save_settings(settings_dict):
-    try:
-        with open(SETTINGS_FILE, "w", encoding="utf-8") as f:
-            json.dump(settings_dict, f, ensure_ascii=False, indent=2)
-    except:
-        pass
+def save_settings(new_settings, old_settings):
+    if new_settings != old_settings:
+        _atomic_write_json(SETTINGS_FILE, new_settings)
 
 default_prompt = (
     "Restore and enhance this early low-resolution video with a natural realistic color grade, "
@@ -261,7 +270,7 @@ current_settings = {
     "scale_to_length": int(scale_to_length),
     "custom_prompt": custom_prompt
 }
-save_settings(current_settings)
+save_settings(current_settings, saved_settings)
 
 st.markdown("---")
 preview_col1, preview_col2 = st.columns([1, 1])
@@ -342,7 +351,7 @@ if start_btn:
                 st.session_state.current_start_index = next_idx
             
             current_settings["start_index"] = int(st.session_state.current_start_index)
-            save_settings(current_settings)
+            save_settings(current_settings, saved_settings)
 
             st.success(f"🎉 批次任務執行完畢！起始索引已自動更新為：{st.session_state.current_start_index}")
         except Exception as e:
